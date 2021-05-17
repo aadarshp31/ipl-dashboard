@@ -2,9 +2,11 @@ package in.adarshpandey.app.data;
 
 import in.adarshpandey.app.model.Match;
 
+import javax.sql.DataSource;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -45,4 +47,13 @@ public class BatchConfig {
     return new MatchDataProcessor();
   }
 
+  @Bean
+  public JdbcBatchItemWriter<Match> writer(DataSource dataSource) {
+    return new JdbcBatchItemWriterBuilder<Match>()
+        .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
+        .sql(
+            "INSERT INTO match (id, city, date, player_of_match, venue, team1, team2, toss_winner, toss_decision, match_winner, result, result_margin, method, umpire1, umpire2)"
+                + " VALUES (:id, :city, :date, :playerOfMatch, :venue, :team1, :team2, :tossWinner, :tossDecision, :matchWinner, :result, :resultMargin, :method, :umpire1, :umpire2)")
+        .dataSource(dataSource).build();
+  }
 }
