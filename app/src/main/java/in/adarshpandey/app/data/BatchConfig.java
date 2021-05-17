@@ -40,4 +40,9 @@ public class BatchConfig {
         }).build();
   }
 
+  @Bean
+  public MatchDataProcessor processor() {
+    return new MatchDataProcessor();
+  }
+
 }
